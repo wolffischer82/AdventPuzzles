@@ -15,14 +15,14 @@ class Day6 (filename : String){
                 createdNewSet = true;
             }
 
-            groupsPart1[groupsPart1.size-1].addAll(groupString.toCharArray().asList());
+            groupsPart1[groupsPart1.size-1].addAll(groupString.toList());
             if (createdNewSet && groupString != "")
             {
                 createdNewSet = false;
-                groupsPart2[groupsPart2.size-1].addAll(groupString.toCharArray().asList());
+                groupsPart2[groupsPart2.size-1].addAll(groupString.toList());
             }
             else {
-                val newSet = groupsPart2[groupsPart2.size - 1].intersect(groupString.toCharArray().asList());
+                val newSet = groupsPart2[groupsPart2.size - 1].intersect(groupString.toList());
                 groupsPart2[groupsPart2.size - 1] = newSet.toMutableSet();
             }
         }

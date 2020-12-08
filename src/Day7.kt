@@ -1,11 +1,12 @@
 import java.lang.NumberFormatException
+import kotlin.test.currentStackTrace
 
 class BagNode(color : String){
     companion object{
         private var colorToNodeMap = mutableMapOf<String, BagNode>();
     }
 
-    private var nodeRelationContains = mutableMapOf<BagNode, Int>();
+    var nodeRelationContains = mutableMapOf<BagNode, Int>();
     var nodeRelationContainedIn = mutableListOf<BagNode>();
 
     var color = "";
@@ -26,7 +27,7 @@ class BagNode(color : String){
 }
 
 class Day7 (filename : String) {
-    val nodeMap = mutableMapOf<String, BagNode>();
+    private val nodeMap = mutableMapOf<String, BagNode>();
     init {
         val input = readFile(filename);
 
@@ -40,7 +41,6 @@ class Day7 (filename : String) {
             }
             val currentNode = nodeMap[colorSplit[0]];
 
-            var containedBagsStrings = mutableListOf<String>();
             for (containedBag in colorSplit[1].split(", "))
             {
                 var cleanedBagInfo = containedBag.replace(".", "");
@@ -84,8 +84,36 @@ class Day7 (filename : String) {
 
         println("Found a total of ${resultSet.size} bags containing $color");
     }
+
+    fun computeContainedBagsOf(color : String){
+        var nodeList = mutableListOf<BagNode>();
+        var index = 0;
+        var currentNode = nodeMap[color];
+        var allBagsContained = 0;
+        while (currentNode != null)
+        {
+            for (node in currentNode.nodeRelationContains.keys)
+            {
+                val nodeCount = currentNode.nodeRelationContains[node]!!-1;
+                for (i in 0..nodeCount){
+                    nodeList.add(node);
+                    allBagsContained++;
+                }
+            }
+
+            if (nodeList.size > index){
+                currentNode = nodeList[index];
+                index++;
+            }
+            else {
+                currentNode = null;
+            }
+        }
+        println("Total amount of all bags within a $color bag is $allBagsContained");
+    }
 }
 fun main (args : Array<String>){
     val bagDay = Day7("src/Day7Input");
     bagDay.searchBagsContaining("shiny gold");
+    bagDay.computeContainedBagsOf("shiny gold");
 }
