@@ -19,7 +19,7 @@ class Day8(filename : String) {
         var currentLine = 0;
         successfulFinished = false;
         codeExecutionMap.clear();
-        while (currentLine < code.size && !codeExecutionMap.DaycontainsKey(currentLine))
+        while (currentLine < code.size && !codeExecutionMap.containsKey(currentLine))
         {
             codeExecutionMap[currentLine] = code[currentLine];
             val splitCommand = code[currentLine].split(" ");
