@@ -1,5 +1,5 @@
 import java.lang.NumberFormatException
-import kotlin.test.currentStackTrace
+import java.util.*
 
 class BagNode(color : String){
     companion object{
@@ -34,11 +34,7 @@ class Day7 (filename : String) {
         for (rule in input)
         {
             val colorSplit = rule.split(" bags contain ");
-
-            if (!nodeMap.containsKey(colorSplit[0]))
-            {
-                nodeMap[colorSplit[0]] = BagNode(colorSplit[0]);
-            }
+            nodeMap.computeIfAbsent(colorSplit[0]){BagNode(colorSplit[0])};
             val currentNode = nodeMap[colorSplit[0]];
 
             for (containedBag in colorSplit[1].split(", "))
@@ -54,10 +50,7 @@ class Day7 (filename : String) {
                     continue;
                 }
                 val bagName = cleanedBagInfo.substring(2).trim();
-                if (!nodeMap.containsKey(bagName))
-                {
-                    nodeMap[bagName] = BagNode(bagName);
-                }
+                nodeMap.computeIfAbsent(bagName){BagNode(bagName)};
                 currentNode!!.addNode(nodeMap[bagName], amount);
             }
         }
@@ -86,34 +79,24 @@ class Day7 (filename : String) {
     }
 
     fun computeContainedBagsOf(color : String){
-        var nodeList = mutableListOf<BagNode>();
-        var index = 0;
-        var currentNode = nodeMap[color];
-        var allBagsContained = 0;
-        while (currentNode != null)
-        {
-            for (node in currentNode.nodeRelationContains.keys)
-            {
-                val nodeCount = currentNode.nodeRelationContains[node]!!-1;
-                for (i in 0..nodeCount){
-                    nodeList.add(node);
-                    allBagsContained++;
-                }
-            }
+        var nodeList = LinkedList<BagNode?>().apply { add(nodeMap[color])};
+        var index = 0
+        var allBagsContained = 0
 
-            if (nodeList.size > index){
-                currentNode = nodeList[index];
-                index++;
-            }
-            else {
-                currentNode = null;
-            }
+        while(nodeList.isNotEmpty())
+        {
+            var currentNode = nodeList.poll()!!;
+            currentNode.nodeRelationContains.forEach {node, amount -> for (i in 0..amount-1) {
+                nodeList.offer(node);
+                allBagsContained++;
+            } }
         }
-        println("Total amount of all bags within a $color bag is $allBagsContained");
+
+        println("Total amount of all bags within a $color bag is $allBagsContained")
     }
 }
 fun main (args : Array<String>){
-    val bagDay = Day7("src/Day7Input");
-    bagDay.searchBagsContaining("shiny gold");
-    bagDay.computeContainedBagsOf("shiny gold");
+    val bagDay = Day7("src/Day7Input")
+    bagDay.searchBagsContaining("shiny gold")
+    bagDay.computeContainedBagsOf("shiny gold")
 }
