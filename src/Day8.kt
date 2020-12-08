@@ -8,14 +8,6 @@ class Day8(filename : String) {
 
     }
 
-    fun convertInt(input : String) : Int{
-        val accVal = input.substring(1).toInt();
-        if (input[0] == '-') {
-            return accVal * -1;
-        }
-        return  accVal;
-    }
-
     fun execute(){
         execute(input);
         println ("Last acc value is $acc");
@@ -27,18 +19,18 @@ class Day8(filename : String) {
         var currentLine = 0;
         successfulFinished = false;
         codeExecutionMap.clear();
-        while (currentLine < code.size && !codeExecutionMap.containsKey(currentLine))
+        while (currentLine < code.size && !codeExecutionMap.DaycontainsKey(currentLine))
         {
             codeExecutionMap[currentLine] = code[currentLine];
             val splitCommand = code[currentLine].split(" ");
             when {
                 splitCommand[0] == "nop" -> {currentLine++}
                 splitCommand[0] == "acc" -> {
-                    acc += convertInt(splitCommand[1]);
+                    acc += splitCommand[1].toInt();
                     currentLine++;
                 }
                 splitCommand[0] == "jmp" -> {
-                    currentLine += convertInt(splitCommand[1]);
+                    currentLine += splitCommand[1].toInt();
                 }
             }
         }
