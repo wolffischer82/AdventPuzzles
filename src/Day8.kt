@@ -61,7 +61,8 @@ class Day8(filename : String) {
 
 fun main(args : Array<String>)
 {
-    val day8 = Day8("src/Day8Input");
-    day8.execute();
-    day8.executePart2();
+    Day8("src/Day8Input").apply {
+        execute();
+        executePart2();
+    }
 }
