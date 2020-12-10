@@ -8,10 +8,15 @@ class Day9 (filename : String) {
         var wrongNumber : Long = 0;
 
         for (i in preambleSize until numberList.size){
-            val tempMap : MutableSet<Long> = mutableSetOf();
-            numberList.subList(i-preambleSize, i).forEach { tempMap.add(numberList[i]-it)};
-            var isCorrect = false;
-            numberList.subList(i-preambleSize, i).forEach { if (tempMap.contains(it)) isCorrect = true }
+//            val tempMap : MutableSet<Long> = mutableSetOf();
+//            numberList.subList(i-preambleSize, i).forEach { tempMap.add(numberList[i]-it)};
+//            var isCorrect = false;
+//            numberList.subList(i-preambleSize, i).forEach { if (tempMap.contains(it)) isCorrect = true }
+
+            val preamble = numberList.subList(i - preambleSize, i)
+            val tempSet = preamble.map { numberList[i] - it }.toSet()
+            val isCorrect = preamble.any { tempSet.contains(it) }
+
             if (!isCorrect)
             {
                 wrongNumber = numberList[i];
