@@ -1,6 +1,6 @@
 import kotlin.math.abs
 
-class Day12 (filename : String){
+class Day121 (filename : String){
 
     var posEast = 0;
     var posWest = 0;
@@ -66,5 +66,5 @@ class Day12 (filename : String){
 
 }
 fun main (args : Array<String>){
-    Day12("src/Day12Input").run{}
+    Day121("src/Day12Input").run{}
 }
