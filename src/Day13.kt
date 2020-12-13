@@ -24,7 +24,7 @@ class Day13 (filename: String){
 
     var foundResult = false;
 
-    suspend fun part2() {
+    suspend fun part2BruteForce() {
 
         val increments: Long = 100000000000
 
@@ -48,7 +48,6 @@ class Day13 (filename: String){
 
             delay(1000)
     }
-
 
     fun part2Worker(starttime :Long, endtime : Long) {
         println("Starting worker @ $starttime till $endtime")
@@ -95,11 +94,30 @@ loopfor@    for (bus in sortedListBusID){
         if (foundResult){
             println("Earliest departure time is $departureTime") //Solution: 305068317272992
         }
+    }
 
+    fun part2Efficient(){
+        //converted from https://github.com/viceroypenguin/adventofcode/blob/master/2020/day13.original.cs
+        val input = readFile(filename)
+
+        var splitInput = input[1].split(",")
+        var earliestTime = splitInput[0].toLong()
+        var increment = earliestTime
+        for (i in 1..splitInput.size-1) {
+            if (splitInput[i] == "x") continue;
+            var currentTime = splitInput[i].toLong()
+            var modValue = currentTime - (i % currentTime)
+            while (earliestTime % currentTime != modValue){
+                earliestTime += increment
+            }
+            increment = lcm(increment, currentTime)
+        }
+
+        println ("Result is $earliestTime")
     }
 }
 
 suspend fun main(args : Array<String>) {
-    Day13("src/Day13Input").run { part1();part2() }
+    Day13("src/Day13Input").run { part1();part2Efficient()}
 
 }
