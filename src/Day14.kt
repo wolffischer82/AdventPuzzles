@@ -84,23 +84,9 @@ class Day14(filename : String) {
 
                     for (i in 0 until memAddreBinary.length){
                         if (currentMaskMod[i] == 'X') continue
-                        if (memAddreBinary[i] == '1' || currentMaskMod[i] == '1') {
+                        if (memAddreBinary[i] == '1') {
                             currentMaskMod = currentMaskMod.substring(0,i) + '1' + currentMaskMod.substring(i+1);
                         }
-                    }
-
-                    val mask = zeroBitString.substring(0, 64-currentMask.length) + currentMask;
-
-                    for (i in 0..memAddreBinary.length-1){
-                        val memC = memAddreBinary[63-i]
-                        val masC = mask[63-i]
-                        val curC = currentMaskMod[63-i]
-                        if ((curC == '0' && (memC != '0' || masC != '0')) ||
-                            (curC == 'X' && masC != 'X') ||
-                            (curC == '1' && memC != '1' && masC != '1')){
-                            println("Error!");
-                        }
-
                     }
 
                     var maskSplit = currentMaskMod.split("X")
@@ -125,8 +111,7 @@ class Day14(filename : String) {
         println("Num of X is $numX")
         println("Result Part 2 is ${memoryMap.values.sum()}");
         println("Overwritten memory addresses are $overwrittenMemory")
-        //Should be 3161838538691
-        //instead   3371546691215
+
 
     }
 }
