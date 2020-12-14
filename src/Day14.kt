@@ -1,5 +1,3 @@
-import kotlin.math.pow
-
 class Day14(filename : String) {
     val filename = filename
     fun part1() {
@@ -31,8 +29,8 @@ class Day14(filename : String) {
         println("Result Part 1 is $result");
     }
 
-    class MemStrNode(memoryAddress : String) {
-        var children = mutableListOf<MemStrNode>()
+    class AddressVariationBuilder(memoryAddress : String) {
+        var children = mutableListOf<AddressVariationBuilder>()
         var address = ""
         init {
             address= memoryAddress
@@ -40,8 +38,8 @@ class Day14(filename : String) {
 
         fun addNewAddress(address : String) {
             if (children.size == 0){
-                children.add(MemStrNode("0" + address));
-                children.add(MemStrNode("1" + address));
+                children.add(AddressVariationBuilder("0" + address));
+                children.add(AddressVariationBuilder("1" + address));
             }
             else {
                 for (i in children){
@@ -68,7 +66,7 @@ class Day14(filename : String) {
         val memoryMap : MutableMap<Long, Long> = mutableMapOf()
         var currentMask : String = ""
         var overwrittenMemory = 0;
-        val zeroBitSet = "0000000000000000000000000000000000000000000000000000000000000000"
+        val zeroBitString = "0000000000000000000000000000000000000000000000000000000000000000"
         var numX = 0;
         for (line in input){
             val splitters = line.split(" = ")
@@ -80,26 +78,41 @@ class Day14(filename : String) {
                     val memAddress = splitters[0].split("[")[1].split("]")[0].toLong()
                     var value = splitters[1].toLong()
 
-                    var memoryAddressBinary = java.lang.Long.toBinaryString(memAddress)
-                    memoryAddressBinary = zeroBitSet.substring(0, 64-memoryAddressBinary.length) + memoryAddressBinary
-                    var currentMaskMod = zeroBitSet.substring(0, 64-currentMask.length) + currentMask
+                    var memAddreBinary = java.lang.Long.toBinaryString(memAddress)
+                    memAddreBinary = zeroBitString.substring(0, 64-memAddreBinary.length) + memAddreBinary
+                    var currentMaskMod = zeroBitString.substring(0, 64-currentMask.length) + currentMask
 
-                    for (i in 0 until memoryAddressBinary.length-1){
-                        if (memoryAddressBinary[i] == '1' && currentMaskMod[i] != 'X'){
+                    for (i in 0 until memAddreBinary.length){
+                        if (currentMaskMod[i] == 'X') continue
+                        if (memAddreBinary[i] == '1' || currentMaskMod[i] == '1') {
                             currentMaskMod = currentMaskMod.substring(0,i) + '1' + currentMaskMod.substring(i+1);
                         }
                     }
 
+                    val mask = zeroBitString.substring(0, 64-currentMask.length) + currentMask;
+
+                    for (i in 0..memAddreBinary.length-1){
+                        val memC = memAddreBinary[63-i]
+                        val masC = mask[63-i]
+                        val curC = currentMaskMod[63-i]
+                        if ((curC == '0' && (memC != '0' || masC != '0')) ||
+                            (curC == 'X' && masC != 'X') ||
+                            (curC == '1' && memC != '1' && masC != '1')){
+                            println("Error!");
+                        }
+
+                    }
+
                     var maskSplit = currentMaskMod.split("X")
-                    var firstNode : MemStrNode = MemStrNode(maskSplit[0])
+                    var addressBuilder = AddressVariationBuilder(maskSplit[0])
 
                     for (i in 1 until maskSplit.size){
-                        firstNode.addNewAddress(maskSplit[i])
+                        addressBuilder.addNewAddress(maskSplit[i])
                     }
 
                     val addressList = mutableListOf<String>();
-                    if (firstNode != null) {
-                        addressList.addAll(firstNode.returnAddresses())
+                    if (addressBuilder != null) {
+                        addressList.addAll(addressBuilder.returnAddresses())
                     }
 
                     for (i in addressList){
@@ -112,6 +125,8 @@ class Day14(filename : String) {
         println("Num of X is $numX")
         println("Result Part 2 is ${memoryMap.values.sum()}");
         println("Overwritten memory addresses are $overwrittenMemory")
+        //Should be 3161838538691
+        //instead   3371546691215
 
     }
 }
