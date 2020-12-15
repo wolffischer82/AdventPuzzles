@@ -111,8 +111,6 @@ class Day14(filename : String) {
         println("Num of X is $numX")
         println("Result Part 2 is ${memoryMap.values.sum()}");
         println("Overwritten memory addresses are $overwrittenMemory")
-
-
     }
 }
 fun main (args : Array<String>){
