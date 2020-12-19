@@ -1,36 +1,42 @@
+import kotlin.math.max
+
 class RuleNode(id : String) {
     val id = id
     val childVariations = mutableSetOf<List<RuleNode>>()
     var literal = ""
 
     fun matchesRule(message : String) : Boolean {
-        return matchesRule(message, 0) == message.length
+        return matchesRule(message, 0).contains(message.length)
     }
-    private fun matchesRule(message: String, index : Int) : Int {
-        if (index >= message.length) return -1
+    private fun matchesRule(message: String, index : Int) : List<Int> {
+        if (index >= message.length) return listOf()
 
         if (literal != ""){
             val charStr = message[index].toString()
             if (charStr == literal){
-                return index+1
+                return listOf(index+1)
             }
-            return -1
+            return listOf()
         }
+
+        var result = mutableListOf<Int>()
 
 varC@   for (variation in childVariations){
-            var lastIndex = index
 
+            var lastResult = mutableListOf<Int>().apply { add(index) }
+            var newResult = mutableListOf<Int>()
             for (c in variation){
-                lastIndex = c.matchesRule(message, lastIndex)
-                if (lastIndex < 0) {
-                    continue@varC
+                for (i in lastResult){
+                    newResult.addAll(c.matchesRule(message, i))
                 }
+                lastResult.clear()
+                lastResult.addAll(newResult)
+                newResult.clear()
             }
-            if (lastIndex >= 0) {
-                return lastIndex
-            }
+            result.addAll(lastResult)
         }
-        return -1
+
+        return result
     }
 
     fun addChildVariation(nodeList : List<RuleNode>){
@@ -94,7 +100,6 @@ class Day19 (filename : String) {
             }
         }
         println("Correct rules are $result")
-
     }
     fun part2(){
 
@@ -102,5 +107,6 @@ class Day19 (filename : String) {
 }
 
 fun main(args : Array<String>){
-    Day19("src/Day19Input").run { part1(); part2() }
+    Day19("src/Day19Input").run { part1() }
+    Day19("src/Day19InputPart2").run { part1() }
 }
