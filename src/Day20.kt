@@ -14,6 +14,8 @@ class TileOrientation(edges : List<String>, parentTile : Tile, flipped : Boolean
     val flipped = flipped
     val orientation = orientation
 
+
+
     init {
         topEdgesMap.putIfAbsent(edges[0], mutableListOf())
         topEdgesMap[edges[0]]!!.add(this)
@@ -133,26 +135,9 @@ class ImageMesh(dimensions : Int, allTiles : List<Tile>){
                 }
                 return null
 
-                outputData()
             }
         }
         return this
-    }
-
-    fun outputData() {
-        println()
-        for (y in 0..dimensions-1){
-            for (x in 0 .. dimensions-1){
-                if (data!![x][y] != null){
-                    print ("${data!![x][y]!!.parentTile.id}\t");
-                }
-                else {
-                    print ("----\t")
-                }
-
-            }
-            println()
-        }
     }
 
     fun calculateImageResult() : Long {
@@ -168,6 +153,78 @@ class ImageMesh(dimensions : Int, allTiles : List<Tile>){
 
         return result;
     }
+
+    private fun createWholeImage() : Array<Array<Char>>{
+        val length = data!!.size*8
+        val result = Array(length){Array(length){'.'} }
+        for (y in 0 until data!!.size){
+            for (x in 0 until data!!.size) {
+                val t = data!![x][y]
+                val tileData = t!!.parentTile.orientData(t!!)
+                for (t_y in 0 until 8){
+                    for (t_x in 0 until 8){
+                        result[x*8+t_x][y*8+t_y] = tileData[x][y]
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    fun searchSeaMonster() : Int{
+        var input = createWholeImage()
+        printArray(input)
+        var result = 0;
+        var monsters = 0;
+        for (x in 0 until input.size){
+            for (y in 0 until input.size){
+                if (input[x][y] == '#') {
+                    result++
+                }
+            }
+        }
+
+        var rotations = 0
+        while (monsters == 0){
+            for (x in 0 until input.size-20){
+                for (y in 0 until input.size-3){
+                    val foundMonster = isMonster(x,y,input)
+                    if (foundMonster) {
+                        monsters++
+                    }
+                }
+            }
+            input = rotate(1, input)
+            rotations++
+            if (rotations == 4){
+                input = flip(input)
+            }
+        }
+
+        return result - monsters*15
+    }
+
+    /**
+     * Seamonster takes 15 sharps...
+     */
+    fun isMonster(x : Int, y : Int, data : Array<Array<Char>>) : Boolean{
+        return data[x][y+1] == '#' &&
+                data[x+1][y+2] == '#' &&
+                data[x+4][y+2] == '#' &&
+                data[x+5][y+1] == '#' &&
+                data[x+6][y+1] == '#' &&
+                data[x+7][y+2] == '#' &&
+                data[x+10][y+2] == '#' &&
+                data[x+11][y+1] == '#' &&
+                data[x+12][y+1] == '#' &&
+                data[x+13][y+2] == '#' &&
+                data[x+16][y+2] == '#' &&
+                data[x+17][y+1] == '#' &&
+                data[x+18][y] == '#' &&
+                data[x+18][y+1] == '#' &&
+                data[x+19][y+1] == '#'
+    }
+
 }
 
 class Tile(ID : Int) {
@@ -176,6 +233,8 @@ class Tile(ID : Int) {
 
     val originalEdges = mutableListOf<String>()
     val orientations = mutableListOf<TileOrientation>()
+    var dataWithoutEdges = Array(8){Array(8){'.'} }
+
 
     fun addString(input : String){
         rawData.add(input)
@@ -188,12 +247,28 @@ class Tile(ID : Int) {
             rightEdge += l[l.length-1]
         }
 
+        for (y in (1..8)){
+            for (x in (1..8)){
+                dataWithoutEdges[x-1][y-1] = rawData[y][x]
+            }
+        }
+
         //0 is up, 1 is right, 2 is down, 3 is left
         originalEdges.add(rawData[0])
         originalEdges.add(rightEdge)
         originalEdges.add(rawData[rawData.size-1])
         originalEdges.add(leftEdge)
         createOrientations()
+        flip(dataWithoutEdges)
+    }
+
+    fun orientData(orientation : TileOrientation) : Array<Array<Char>>{
+
+        if (orientation.flipped) {
+            dataWithoutEdges = flip(dataWithoutEdges)
+        }
+        dataWithoutEdges = rotate(orientation.orientation, dataWithoutEdges)
+        return dataWithoutEdges
     }
 
     private fun createOrientations(){
@@ -225,8 +300,6 @@ class Tile(ID : Int) {
             flippedEdges[1] = flippedEdges[0]
             flippedEdges[0] = lastEdge.reversed()
         }
-
-        println();
     }
 }
 
@@ -253,21 +326,26 @@ class Day20 (filename : String) {
         val dimensions = sqrt(tiles.size.toFloat()).toInt()
 
         var foundSomething = false;
-        for (t in tiles){
+        var finalImage : ImageMesh? = null
+ outer@ for (t in tiles){
             for (o in t.orientations){
                 val image = ImageMesh(dimensions,tiles)
                 image.addTile(0,0, o)
-                val result = image.fillImage()
-                if (result != null) {
+                finalImage = image.fillImage()
+                if (finalImage != null) {
                     foundSomething = true;
-                    println("There is a result ${result.calculateImageResult()}")
-                    break;
+                    println("There is a result ${finalImage.calculateImageResult()}")
+                    break@outer;
                 }
             }
         }
         if (!foundSomething) {
             println("Found nothing!")
         }
+
+        val roughWaters = finalImage!!.searchSeaMonster()
+        println("Rough Waters $roughWaters")
+
 
     }
 }
