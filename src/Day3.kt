@@ -32,7 +32,7 @@ class Map(val fileName:String)
         println("Each line has a size of $mapSizeHorizontalOnce entries");
         println("Max Width equals $mapSizeHorizontal");
 
-        map = Array(mapSizeHorizontal) { Array<TileTypes>(mapSizeVertical) { TileTypes.Empty } };
+        map = Array(mapSizeHorizontal) { Array(mapSizeVertical) { TileTypes.Empty } };
 
         for ((y, mapLine) in stringMap.withIndex()) {
             for ((x, char) in mapLine.toCharArray().withIndex()) {
