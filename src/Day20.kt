@@ -356,7 +356,6 @@ class Day20 (filename : String) {
             for (o in t.orientations){
                 val image = ImageMesh(dimensions,tiles)
                 image.addTile(0,0, o)
-                finalImage = null
                 finalImage = image.fillImage()
                 if (finalImage != null) {
                     numberImages++
@@ -367,6 +366,7 @@ class Day20 (filename : String) {
                     //break@outer;
                     printArray(finalImage.createWholeImage())
                     finalImage.printIDs()
+                    break@outer
                 }
             }
         }
