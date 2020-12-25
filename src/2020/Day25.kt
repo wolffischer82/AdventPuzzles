@@ -1,10 +1,30 @@
 package `2020`
 
-import readFile
+class Day25 () : TemplateDay(25, 2020) {
+    fun transformSubject(subjectNumber : Long, loopSize : Long) : Long{
+        var result = 1L
+        for (loop in 1..loopSize) {
+            result *= subjectNumber
+            result = result % 20201227
+        }
+        return result
+    }
 
-class Day25 (filename : String) : TemplateDay(2020, 25) {
     override fun part1() {
-        super.part1()
+
+        val cardKey = input?.get(0)?.toLong()
+        val doorKey = input?.get(1)?.toLong()
+
+        var result = 1L
+        var loop = 0L
+        while(result != cardKey) {
+            loop++
+            result *= 7
+            result = result % 20201227
+        }
+
+        val encryptionKey = transformSubject(doorKey!!, loop)
+        println ("Encryptionkey is $encryptionKey")
 
     }
 
@@ -14,5 +34,5 @@ class Day25 (filename : String) : TemplateDay(2020, 25) {
 }
 
 fun main (args : Array<String>){
-    Day25("data/2020/Day25Input").run {  }
+    Day25().run { part1(); part2() }
 }

@@ -2,12 +2,11 @@ package `2020`
 
 import readFile
 
-open class TemplateDay (year : Int, day : Int){
-    var day = day
-    var year = year
-    var dataFile = "src/2020/Day${day}Input"
-    var input : List<String>? = null
+open class TemplateDay (day : Int, year : Int){
+
+    open var input : List<String>? = null
     init {
+        var dataFile = "data/$year/Day${day}Input"
         input = readFile(dataFile)
     }
     open fun part1(){
@@ -17,3 +16,4 @@ open class TemplateDay (year : Int, day : Int){
         println("Implement part2")
     }
 }
+
