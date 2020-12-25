@@ -1,5 +1,3 @@
-package `2020`
-
 import readFile
 
 open class TemplateDay (day : Int, year : Int){

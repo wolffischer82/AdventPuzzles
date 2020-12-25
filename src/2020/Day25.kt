@@ -1,5 +1,7 @@
 package `2020`
 
+import TemplateDay
+
 class Day25 () : TemplateDay(25, 2020) {
     fun transformSubject(subjectNumber : Long, loopSize : Long) : Long{
         var result = 1L
